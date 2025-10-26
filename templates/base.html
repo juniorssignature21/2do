@@ -78,7 +78,18 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <div class="pre-loader"></div>
+        <!-- Preloader -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="preloader-logo">📝</div>
+            <div class="preloader-text">To-Do List</div>
+            <div class="spinner-circle"></div>
+            <div class="progress-bar-container">
+                <div class="progress-bar"></div>
+            </div>
+            <div class="loading-text">Loading your tasks...</div>
+        </div>
+    </div>
     <div class="container">
         <header>
             {% if request.user.is_authenticated %} 
@@ -113,7 +124,15 @@
         </footer>
     </div>
     <script>
-        
-    </script>
+    window.addEventListener('load', function() {
+        const preloader = document.getElementById('preloader');
+        setTimeout(function() {
+            preloader.classList.add('hidden');
+            setTimeout(function() {
+                preloader.remove();
+            }, 500);
+        }, 500);
+    });
+</script>
 </body>
 </html>
