@@ -10,9 +10,11 @@ from django.utils import timezone
 def custom_404(request, exception):
     return render(request, '404.html', status=404)
 def home(request):
-    tasks = Task.objects.all()
-    completed_tasks = Task.objects.filter(completed=True)
-    pending_tasks = Task.objects.filter(completed=False)
+    if not request.user.is_authenticated:
+        return redirect('login')
+    tasks = Task.objects.filter(user=request.user)
+    completed_tasks = Task.objects.filter(user=request.user,completed=True)
+    pending_tasks = Task.objects.filter(user=request.user, completed=False)
     current_time = timezone.now()
     
     context = {
@@ -125,3 +127,8 @@ def login_user(request):
             messages.error(request, "Invalid Credentials")
             return redirect('login')
     return render(request, 'login.html')
+
+def logout_user(request):
+    logout(request)
+    messages.success(request, "Logout Success")
+    return redirect('login')
