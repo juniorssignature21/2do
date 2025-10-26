@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if form.instance.pk %}Edit Task{% else %}Add New Task{% endif %} - To-Do List{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-header {
+        margin-bottom: 30px;
+    }
+
+    .form-header h2 {
+        color: #333;
+        font-size: 2em;
+        margin-bottom: 10px;
+    }
+
+    .form-header p {
+        color: #6c757d;
+        font-size: 1.1em;
+    }
+
+    .task-form {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+    }
+
+    .form-group {
+        margin-bottom: 25px;
+    }
+
+    .form-group label {
+        display: block;
+        color: #333;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 1.1em;
+    }
+
+    .form-group label .required {
+        color: #dc3545;
+        margin-left: 4px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        font-size: 1em;
+        font-family: inherit;
+        transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 120px;
+    }
+
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        cursor: pointer;
+    }
+
+    .checkbox-group label {
+        margin: 0;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .btn {
+        padding: 12px 30px;
+        border: none;
+        border-radius: 8px;
+        font-size: 1em;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        flex: 1;
+    }
+
+    .btn-primary:hover {
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn-secondary {
+        background: #6c757d;
+        color: white;
+    }
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+    .form-help {
+        font-size: 0.9em;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .error-message {
+        background: #f8d7da;
+        color: #721c24;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #dc3545;
+    }
+
+    .success-message {
+        background: #d4edda;
+        color: #155724;
+        padding: 12px 15px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+        border-left: 4px solid #28a745;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 20px;
+        transition: color 0.3s;
+    }
+
+    .back-link:hover {
+        color: #764ba2;
+    }
+
+    .back-link::before {
+        content: "←";
+        margin-right: 8px;
+        font-size: 1.2em;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<a href="{% url 'home' %}" class="back-link">Back to Tasks</a>
+
+<div class="form-header">
+    <h2>{% if form.instance.pk %}Edit Task{% else %}Add New Task{% endif %}</h2>
+    <p>{% if form.instance.pk %}Update the details of your task below.{% else %}Fill in the details to create a new task.{% endif %}</p>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="{% if message.tags %}{{ message.tags }}-message{% endif %}">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<form method="post" class="task-form">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="id_title">
+            Task Title
+            <span class="required">*</span>
+        </label>
+        {{ form.title }}
+        {% if form.title.errors %}
+            <div class="error-message">{{ form.title.errors }}</div>
+        {% endif %}
+        <div class="form-help">Enter a clear and concise title for your task.</div>
+    </div>
+
+    <div class="form-group">
+        <label for="id_description">
+            Description
+        </label>
+        {{ form.description }}
+        {% if form.description.errors %}
+            <div class="error-message">{{ form.description.errors }}</div>
+        {% endif %}
+        <div class="form-help">Add any additional details or notes about this task (optional).</div>
+    </div>
+
+    {% comment %} <div class="form-group">
+        <div class="checkbox-group">
+            {{ form.completed }}
+            <label for="id_completed">Mark as completed</label>
+        </div>
+        {% if form.completed.errors %}
+            <div class="error-message">{{ form.completed.errors }}</div>
+        {% endif %}
+    </div> {% endcomment %}
+    <div class="form-group">
+        <label for="id_deadline">
+            Deadline
+        </label>
+        <input type="datetime-local" name="deadline" class="form-control" id="">
+        {% if form.deadline.errors %}
+            <div class="error-message">{{ form.deadline.errors }}</div>
+        {% endif %}
+        <div class="form-help">Enter a deadline</div>
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+            {% if form.instance.pk %}💾 Update Task{% else %}✨ Create Task{% endif %}
+        </button>
+        <a href="{% url 'home' %}" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+{% endblock %}
