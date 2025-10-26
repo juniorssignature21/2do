@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.utils import timezone
 # Create your views here.
 
+def custom_404(request, exception):
+    return render(request, '404.html', status=404)
 def home(request):
     tasks = Task.objects.all()
     completed_tasks = Task.objects.filter(completed=True)
